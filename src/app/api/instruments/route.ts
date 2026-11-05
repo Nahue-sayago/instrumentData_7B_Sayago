@@ -16,6 +16,12 @@ export async function GET() {
     return NextResponse.json(instruments);
   } catch (error) {
     console.error("Error al consultar instrumentos:", error);
+    if (!process.env.POSTGRES_URL && !process.env.DATABASE_URL) {
+      return NextResponse.json(
+        { error: "Falta configurar POSTGRES_URL o DATABASE_URL para guardar y recuperar los instrumentos." },
+        { status: 503 },
+      );
+    }
     return NextResponse.json({ error: "No se pudo conectar con la base de datos. Revisa la configuración." }, { status: 500 });
   }
 }
