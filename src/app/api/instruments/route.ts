@@ -1,6 +1,6 @@
 import { del, put } from "@vercel/blob";
 import { NextResponse } from "next/server";
-import { blobTokenError, ensureSchema, getPhoto, isBlobConfigured, readFields } from "@/lib/instruments";
+import { blobTokenError, ensureSchema, getPhoto, isMissingBlobCredentials, readFields } from "@/lib/instruments";
 
 export const runtime = "nodejs";
 
@@ -40,7 +40,6 @@ export async function POST(request: Request) {
     }
     const photo = photoResult;
     if (!photo) return NextResponse.json({ error: "La foto es obligatoria." }, { status: 400 });
-    if (!isBlobConfigured()) return NextResponse.json({ error: blobTokenError }, { status: 503 });
 
     const blob = await put(`instrumentos/${Date.now()}-${photo.name}`, photo, {
       access: "public",
@@ -59,6 +58,9 @@ export async function POST(request: Request) {
   } catch (error) {
     if (uploadedPathname) await del(uploadedPathname).catch(() => undefined);
     console.error("Error al crear instrumento:", error);
+    if (isMissingBlobCredentials(error)) {
+      return NextResponse.json({ error: blobTokenError }, { status: 503 });
+    }
     const message = error instanceof Error ? error.message : "No se pudo guardar el registro.";
     return NextResponse.json({ error: message }, { status: 500 });
   }

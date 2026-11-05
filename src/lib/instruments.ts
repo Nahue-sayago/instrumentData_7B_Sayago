@@ -11,13 +11,10 @@ export type Instrument = {
   updated_at: string;
 };
 
-export const blobTokenError = "No se detectaron credenciales de Blob. Conecta el almacén al proyecto o configura BLOB_READ_WRITE_TOKEN.";
+export const blobTokenError = "Vercel Blob no encontró credenciales. Confirma que el almacén esté conectado a este proyecto y entorno, o configura BLOB_READ_WRITE_TOKEN.";
 
-export function isBlobConfigured() {
-  return Boolean(
-    process.env.BLOB_READ_WRITE_TOKEN ||
-    (process.env.VERCEL_OIDC_TOKEN && process.env.BLOB_STORE_ID),
-  );
+export function isMissingBlobCredentials(error: unknown) {
+  return error instanceof Error && /no token found|no blob credentials found/i.test(error.message);
 }
 
 export function getDatabase() {
