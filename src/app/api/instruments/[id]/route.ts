@@ -1,6 +1,6 @@
 import { del, put } from "@vercel/blob";
 import { NextResponse } from "next/server";
-import { ensureSchema, getPhoto, readFields } from "@/lib/instruments";
+import { blobTokenError, ensureSchema, getPhoto, isBlobConfigured, readFields } from "@/lib/instruments";
 
 export const runtime = "nodejs";
 
@@ -24,6 +24,9 @@ export async function PUT(request: Request, { params }: RouteContext) {
     const photo = getPhoto(form);
     if (photo && "error" in photo) {
       return NextResponse.json({ error: photo.error }, { status: 400 });
+    }
+    if (photo && !isBlobConfigured()) {
+      return NextResponse.json({ error: blobTokenError }, { status: 503 });
     }
     let photoUrl = (current as { photo_url?: string }).photo_url;
     let photoPathname = (current as { photo_pathname: string }).photo_pathname;
@@ -60,6 +63,7 @@ export async function DELETE(_request: Request, { params }: RouteContext) {
   try {
     const { id } = await params;
     if (!/^\d+$/.test(id)) return NextResponse.json({ error: "Identificador no válido." }, { status: 400 });
+    if (!isBlobConfigured()) return NextResponse.json({ error: blobTokenError }, { status: 503 });
 
     const sql = await ensureSchema();
     const [instrument] = await sql`DELETE FROM instruments WHERE id = ${id} RETURNING photo_pathname`;

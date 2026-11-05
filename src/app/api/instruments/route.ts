@@ -1,6 +1,6 @@
 import { del, put } from "@vercel/blob";
 import { NextResponse } from "next/server";
-import { ensureSchema, getPhoto, readFields } from "@/lib/instruments";
+import { blobTokenError, ensureSchema, getPhoto, isBlobConfigured, readFields } from "@/lib/instruments";
 
 export const runtime = "nodejs";
 
@@ -34,6 +34,7 @@ export async function POST(request: Request) {
     }
     const photo = photoResult;
     if (!photo) return NextResponse.json({ error: "La foto es obligatoria." }, { status: 400 });
+    if (!isBlobConfigured()) return NextResponse.json({ error: blobTokenError }, { status: 503 });
 
     const blob = await put(`instrumentos/${Date.now()}-${photo.name}`, photo, {
       access: "public",

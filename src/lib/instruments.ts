@@ -11,6 +11,12 @@ export type Instrument = {
   updated_at: string;
 };
 
+export const blobTokenError = "Falta configurar BLOB_READ_WRITE_TOKEN para almacenar las fotografías.";
+
+export function isBlobConfigured() {
+  return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+}
+
 export function getDatabase() {
   const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL;
 
