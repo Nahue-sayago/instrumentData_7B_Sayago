@@ -2,6 +2,9 @@
   "name": "inventario-instrumentos",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -12,7 +15,7 @@
     "@fontsource-variable/manrope": "^5.2.6",
     "@fontsource/ibm-plex-mono": "^5.2.6",
     "@neondatabase/serverless": "^0.10.4",
-    "@vercel/blob": "^1.1.1",
+    "@vercel/blob": "^2.8.2",
     "lucide-react": "^0.468.0",
     "next": "^15.2.0",
     "react": "^19.0.0",
@@ -27,6 +30,7 @@
     "typescript": "^5.7.3"
   },
   "overrides": {
-    "postcss": "^8.5.32"
+    "postcss": "^8.5.32",
+    "zod": "^4.6.7"
   }
 }
