@@ -13,7 +13,12 @@ export async function GET() {
       FROM instruments
       ORDER BY created_at DESC
     `;
-    return NextResponse.json(instruments);
+    return NextResponse.json(
+      instruments.map((instrument) => ({
+        ...instrument,
+        photo_url: `/api/instruments/${instrument.id}/photo`,
+      })),
+    );
   } catch (error) {
     console.error("Error al consultar instrumentos:", error);
     if (!process.env.POSTGRES_URL && !process.env.DATABASE_URL) {
@@ -42,7 +47,7 @@ export async function POST(request: Request) {
     if (!photo) return NextResponse.json({ error: "La foto es obligatoria." }, { status: 400 });
 
     const blob = await put(`instrumentos/${Date.now()}-${photo.name}`, photo, {
-      access: "public",
+      access: "private",
       addRandomSuffix: true,
     });
     uploadedPathname = blob.pathname;
@@ -54,7 +59,10 @@ export async function POST(request: Request) {
       RETURNING id, person_name, instrument_name, part_number, serial_number, photo_url, created_at, updated_at
     `;
 
-    return NextResponse.json(instrument, { status: 201 });
+    return NextResponse.json({
+      ...instrument,
+      photo_url: `/api/instruments/${instrument.id}/photo`,
+    }, { status: 201 });
   } catch (error) {
     if (uploadedPathname) await del(uploadedPathname).catch(() => undefined);
     console.error("Error al crear instrumento:", error);

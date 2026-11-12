@@ -29,7 +29,7 @@ export async function PUT(request: Request, { params }: RouteContext) {
     let photoPathname = (current as { photo_pathname: string }).photo_pathname;
     if (photo) {
       const blob = await put(`instrumentos/${Date.now()}-${photo.name}`, photo, {
-        access: "public",
+        access: "private",
         addRandomSuffix: true,
       });
       uploadedPathname = blob.pathname;
@@ -47,7 +47,10 @@ export async function PUT(request: Request, { params }: RouteContext) {
     `;
 
     if (uploadedPathname) await del((current as { photo_pathname: string }).photo_pathname).catch(() => undefined);
-    return NextResponse.json(instrument);
+    return NextResponse.json({
+      ...instrument,
+      photo_url: `/api/instruments/${instrument.id}/photo`,
+    });
   } catch (error) {
     if (uploadedPathname) await del(uploadedPathname).catch(() => undefined);
     console.error("Error al actualizar instrumento:", error);

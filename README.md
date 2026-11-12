@@ -17,8 +17,8 @@ La tabla `instruments` se crea automáticamente al consultar el inventario por p
 3. Crea un almacén de Vercel Blob y conéctalo al proyecto desde la pestaña **Projects** del almacén.
 4. Despliega de nuevo después de configurar las conexiones.
 
-Los almacenes y variables de producción y preview se configuran por separado en Vercel. Las fotos se guardan como blobs públicos para que puedan mostrarse en el inventario.
+Los almacenes y variables de producción y preview se configuran por separado en Vercel. Las fotos se guardan en el almacén privado y se muestran mediante una ruta de la aplicación.
 
 ## Acceso
 
-Esta primera versión no incluye autenticación: cualquier persona con acceso a la URL puede consultar y modificar el inventario. Protege el despliegue con Vercel Deployment Protection o incorpora inicio de sesión antes de usarlo con datos reales. Las fotografías de Vercel Blob también son públicas.
+Esta primera versión no incluye autenticación: cualquier persona con acceso a la URL puede consultar y modificar el inventario, incluidas las fotografías servidas por la aplicación. Protege el despliegue con Vercel Deployment Protection o incorpora inicio de sesión antes de usarlo con datos reales.
